@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/JohnBra/aoc-2024/utils"
+	"github.com/JohnBra/aoc-2024/internal/utils"
 	"math"
 	"regexp"
 	"slices"
