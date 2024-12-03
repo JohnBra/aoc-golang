@@ -14,6 +14,10 @@ func multiplyNumbersInText(text string) int {
 	numsRe := regexp.MustCompile(`\d+`)
 	nums := numsRe.FindAllString(text, -1)
 
+	if len(nums) == 0 {
+		return 0
+	}
+
 	for _, v := range nums {
 		n, err := strconv.Atoi(v)
 		utils.Check(err)
