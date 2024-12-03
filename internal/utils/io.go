@@ -7,6 +7,29 @@ import (
 	"strconv"
 )
 
+func GetFileContentsAsString(filepath string) (string, error) {
+	file, err := os.Open(filepath)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var res string
+
+	for scanner.Scan() {
+		res += scanner.Text()
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	return res, nil
+}
+
 func GetFileContentsAsRunes(filepath string) ([][]rune, error) {
 	file, err := os.Open(filepath)
 

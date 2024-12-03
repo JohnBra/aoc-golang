@@ -16,7 +16,10 @@ func Zip[T any](tuples [][]T) ([][]T, error) {
 	}
 
 	for i := 0; i < len(tuples); i++ {
-		for j := 0; j < len(tuples[0]); j++ {
+		if len(tuples[i]) != len(tuples[0]) {
+			return nil, fmt.Errorf("Tuple lengths not equal. Error on index %d", i)
+		}
+		for j := 0; j < len(tuples[i]); j++ {
 			res[j][i] = tuples[i][j]
 		}
 	}
