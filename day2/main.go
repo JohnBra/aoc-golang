@@ -76,7 +76,7 @@ func main() {
 	// for both parts
 	// read lines from input
 	// get input as variable length slice of slices of ints
-	contents, err := utils.GetFileContentsAsInts("./input.txt")
+	contents, err := utils.GetFileContentsAsIntMatrix("./input.txt")
 	utils.Check(err)
 
 	reports := partOne(contents)

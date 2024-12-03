@@ -30,7 +30,7 @@ func GetFileContentsAsString(filepath string) (string, error) {
 	return res, nil
 }
 
-func GetFileContentsAsRunes(filepath string) ([][]rune, error) {
+func GetFileContentsAsRuneMatrix(filepath string) ([][]rune, error) {
 	file, err := os.Open(filepath)
 
 	if err != nil {
@@ -54,7 +54,7 @@ func GetFileContentsAsRunes(filepath string) ([][]rune, error) {
 	return res, nil
 }
 
-func GetFileContentsAsInts(filepath string) ([][]int, error) {
+func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {
 	file, err := os.Open(filepath)
 
 	if err != nil {
