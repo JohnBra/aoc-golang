@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func GetFileContentsAsString(filepath string) (string, error) {
@@ -25,6 +26,30 @@ func GetFileContentsAsString(filepath string) (string, error) {
 
 	if err := scanner.Err(); err != nil {
 		return "", err
+	}
+
+	return res, nil
+}
+
+func GetFileContentsAsStringMatrix(filepath string, sep string) ([][]string, error) {
+	file, err := os.Open(filepath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var res [][]string
+
+	for scanner.Scan() {
+		var line = strings.Split(scanner.Text(), sep)
+		res = append(res, line)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
 
 	return res, nil
