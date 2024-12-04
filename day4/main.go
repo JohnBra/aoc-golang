@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
@@ -36,6 +37,10 @@ type DirectionModifier struct {
 
 /*
 If "MAS" found do the following for diagonal direction
+
+Note: map key and last value of tuple are index of direction
+in diagonals array
+
 0: (r+2, c+0, [2]) + (r+0, c+2, [1])
 1: (r+2, c+0, [3]) + (r+0, c-2, [0])
 2: (r-2, c+0, [0]) + (r+0, c+2, [3])
@@ -64,6 +69,7 @@ func dfs(matrix [][]string, r int, c int, dir [2]int, i int, word string) int {
 // dfs recursively in each direction
 // dfs will return 1 if xmas string was found for field
 func partOne(contents [][]string) int {
+	defer utils.TimeTrack(time.Now(), "partOne")
 	rows, cols := len(contents), len(contents[0])
 	res := 0
 
@@ -83,6 +89,7 @@ func partOne(contents [][]string) int {
 // dfs recursively in all diagonal directions
 // if dfs returns 1 check corresponding cross starts
 func partTwo(contents [][]string) int {
+	defer utils.TimeTrack(time.Now(), "partTwo")
 	rows, cols := len(contents), len(contents[0])
 	res := 0
 
