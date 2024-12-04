@@ -68,16 +68,16 @@ func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {
 	var res [][]int
 
 	for scanner.Scan() {
-		var list = []int{}
-		nums := re.FindAllString(scanner.Text(), -1)
-		for _, i := range nums {
-			val, err := strconv.Atoi(i)
+		strings := re.FindAllString(scanner.Text(), -1)
+		nums := make([]int, 0, len(strings))
+		for _, v := range strings {
+			num, err := strconv.Atoi(v)
 			if err != nil {
 				return nil, err
 			}
-			list = append(list, val)
+			nums = append(nums, num)
 		}
-		res = append(res, list)
+		res = append(res, nums)
 	}
 
 	if err := scanner.Err(); err != nil {
