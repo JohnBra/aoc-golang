@@ -2,23 +2,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
-
-// day2 part 1
-// init asc/desc flag
-// iterate through each report (int slice)
-// check if num is asc/desc and in range for safe series (+-3 asc/desc respectively)
-// accumulate safe reports and return
-func partOne(contents [][]int) int {
-	res := 0
-	for i := 0; i < len(contents); i++ {
-		if isSafe(contents[i]) {
-			res += 1
-		}
-	}
-	return res
-}
 
 func isSafe(report []int) bool {
 	asc, desc := true, true
@@ -38,6 +24,21 @@ func isSafe(report []int) bool {
 	return false
 }
 
+// day2 part 1
+// init asc/desc flag
+// iterate through each report (int slice)
+// check if num is asc/desc and in range for safe series (+-3 asc/desc respectively)
+// accumulate safe reports and return
+func partOne(contents [][]int) int {
+	res := 0
+	for i := 0; i < len(contents); i++ {
+		if isSafe(contents[i]) {
+			res += 1
+		}
+	}
+	return res
+}
+
 // day2 part 2
 // for each report check if is safe
 // if not create all possible variations missing one level
@@ -54,15 +55,14 @@ func partTwo(contents [][]int) int {
 			continue
 		} else {
 			for j := 0; j < len(report); j++ {
-				var tmp []int
+				tmpReport := make([]int, 0, len(report)-1)
 				for t := 0; t < len(report); t++ {
 					if t == j {
 						continue
 					}
-					tmp = append(tmp, report[t])
+					tmpReport = append(tmpReport, report[t])
 				}
-				// take all values except report[j]
-				if isSafe(tmp) {
+				if isSafe(tmpReport) {
 					res += 1
 					break
 				}
