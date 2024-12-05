@@ -11,7 +11,7 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
-func getIntMatricesFromContents(filepath string) ([][]int, [][]int, error) {
+func getIntMatricesFromContents(filepath string) ([][2]int, [][]int, error) {
 	file, err := os.Open(filepath)
 
 	if err != nil {
@@ -22,7 +22,7 @@ func getIntMatricesFromContents(filepath string) ([][]int, [][]int, error) {
 
 	re := regexp.MustCompile(`\d+`)
 	scanner := bufio.NewScanner(file)
-	var pageOrder [][]int
+	var pageOrder [][2]int
 	var updates [][]int
 	section := 0
 
@@ -44,8 +44,9 @@ func getIntMatricesFromContents(filepath string) ([][]int, [][]int, error) {
 			nums = append(nums, num)
 		}
 
-		if section == 0 {
-			pageOrder = append(pageOrder, nums)
+		// hacky, but works. Don't judge
+		if section == 0 && len(nums) == 2 {
+			pageOrder = append(pageOrder, [2]int(nums))
 		} else if section == 1 {
 			updates = append(updates, nums)
 		}

@@ -1,10 +1,8 @@
 package datastructures
 
-import "fmt"
-
 type Graph[T comparable] map[T]Set[T]
 
-func NewGraph[T comparable](edges [][]T, vertices []T) Graph[T] {
+func NewGraph[T comparable](edges [][2]T, vertices []T) Graph[T] {
 	graph := Graph[T]{}
 
 	for _, v := range vertices {
@@ -12,10 +10,6 @@ func NewGraph[T comparable](edges [][]T, vertices []T) Graph[T] {
 	}
 
 	for _, e := range edges {
-		if len(e) != 2 {
-			panic(fmt.Errorf("edges in DAG must have 2 elements (from, to)"))
-		}
-
 		_, ok := graph[e[0]]
 
 		if !ok {
