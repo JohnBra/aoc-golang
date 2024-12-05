@@ -57,7 +57,11 @@ func dfs(matrix [][]string, r int, c int, dir [2]int, i int, word string) int {
 	if i == len(word) {
 		return 1
 	}
-	if r < 0 || c < 0 || r == len(matrix) || c == len(matrix[0]) || matrix[r][c] != string(word[i]) {
+	if r < 0 ||
+		c < 0 ||
+		r == len(matrix) ||
+		c == len(matrix[0]) ||
+		matrix[r][c] != string(word[i]) {
 		return 0
 	}
 
@@ -69,7 +73,9 @@ func dfs(matrix [][]string, r int, c int, dir [2]int, i int, word string) int {
 // dfs recursively in each direction
 // dfs will return 1 if xmas string was found for field
 func partOne(contents [][]string) int {
-	defer utils.TimeTrack(time.Now(), "partOne")
+	start := time.Now()
+
+	defer utils.TimeTrack(start, "partOne")
 	rows, cols := len(contents), len(contents[0])
 	res := 0
 
@@ -81,6 +87,7 @@ func partOne(contents [][]string) int {
 		}
 	}
 
+	fmt.Printf("Binomial took %s\n", time.Since(start))
 	return res
 }
 
@@ -98,7 +105,13 @@ func partTwo(contents [][]string) int {
 			for i, dir := range diagonals {
 				if dfs(contents, r, c, dir, 0, "MAS") == 1 {
 					for _, modifier := range crossCheck[i] {
-						res += dfs(contents, r+modifier.Row, c+modifier.Col, diagonals[modifier.Dir], 0, "MAS")
+						res += dfs(
+							contents,
+							r+modifier.Row,
+							c+modifier.Col,
+							diagonals[modifier.Dir],
+							0,
+							"MAS")
 					}
 				}
 			}
