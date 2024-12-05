@@ -24,17 +24,9 @@ func (s Set[T]) Remove(vals ...T) {
 	}
 }
 
-func (s Set[T]) Clear() {
-	clear(s)
-}
-
 func (s Set[T]) Contains(val T) bool {
 	_, ok := s[val]
 	return ok
-}
-
-func (s Set[T]) Len() int {
-	return len(s)
 }
 
 func (s Set[T]) Members() []T {

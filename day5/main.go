@@ -66,41 +66,57 @@ func getIntMatricesFromContents(filepath string) ([][]int, [][]int, error) {
 // check if there is an overlap between ordering set for cur val
 // and preceding pages added to set, if yes break (ignore this update)
 // if no add current number to set
-func partOne(ordering map[int]ds.Set[int], updates [][]int) int {
-	res := 0
+func partOne(graph map[int]ds.Set[int], updates [][]int) (int, [][]int) {
+	var invalidUpdates [][]int
+	validRes := 0
 	preceding := ds.NewSet[int]()
+
 	for _, update := range updates {
 		for i, page := range update {
-			if preceding.HasIntersection(ordering[page]) {
+			if preceding.HasIntersection(graph[page]) {
+				invalidUpdates = append(invalidUpdates, update)
 				break
 			}
 
 			preceding.Add(page)
 
 			if i == len(update)-1 {
-				res += update[len(update)/2]
+				validRes += update[len(update)/2]
 			}
 		}
-		preceding.Clear()
+		clear(preceding)
 	}
+	return validRes, invalidUpdates
+}
+
+// day5 part 2
+// create graph / adjacency list of all page edges
+// get topological order for verteces in update
+// sort update list by topological order conserving order of update
+// for items that have equal or no ingoing edges
+// accumulate middle value of corrected updates
+func partTwo(graph ds.Graph[int], updates [][]int) int {
+	res := 0
+
+	for _, update := range updates {
+		order := graph.TopologicalOrder(update)
+		corrected := utils.SortListByOrder(update, order)
+
+		res += corrected[len(corrected)/2]
+	}
+
 	return res
 }
 
 func main() {
-	o, updates, err := getIntMatricesFromContents("./input.txt")
+	edges, updates, err := getIntMatricesFromContents("./input.txt")
 	utils.Check(err)
 	// all items in set must be after key of map
-	ordering := map[int]ds.Set[int]{}
+	graph := ds.NewGraph(edges, []int{})
 
-	for _, tuple := range o {
-		_, ok := ordering[tuple[0]]
-		if !ok {
-			ordering[tuple[0]] = ds.NewSet(tuple[1])
-		} else {
-			ordering[tuple[0]].Add(tuple[1])
-		}
-	}
+	validRes, invalidUpdates := partOne(graph, updates)
+	fmt.Printf("Valid updates %d\n", validRes)
 
-	validUpdates := partOne(ordering, updates)
-	fmt.Printf("Valid updates %d\n", validUpdates)
+	invalidRes := partTwo(graph, invalidUpdates)
+	fmt.Printf("Invalid updates %d\n", invalidRes)
 }
