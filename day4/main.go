@@ -87,7 +87,6 @@ func partOne(contents [][]string) int {
 		}
 	}
 
-	fmt.Printf("Binomial took %s\n", time.Since(start))
 	return res
 }
 

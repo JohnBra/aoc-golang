@@ -9,21 +9,21 @@ func NewGraph[T comparable](edges [][2]T, vertices []T) Graph[T] {
 		graph[v] = NewSet[T]()
 	}
 
-	for _, e := range edges {
-		_, ok := graph[e[0]]
-
-		if !ok {
-			graph[e[0]] = NewSet(e[1])
-		} else {
-			graph[e[0]].Add(e[1])
-		}
-	}
+	graph.AddEdges(edges...)
 
 	return graph
 }
 
-func (g Graph[T]) AddEdge(u, v T) {
-	// TODO implement
+func (g Graph[T]) AddEdges(edges ...[2]T) {
+	for _, e := range edges {
+		_, ok := g[e[0]]
+
+		if !ok {
+			g[e[0]] = NewSet(e[1])
+		} else {
+			g[e[0]].Add(e[1])
+		}
+	}
 }
 
 func (g Graph[T]) TopologicalOrder(vertices []T) []T {

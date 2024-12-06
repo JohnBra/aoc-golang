@@ -1,12 +1,13 @@
 package datastructures
 
-// Implementation with slices. Would be more efficient with ring buffer
+// Simple implementation with slices
+//
 // -- front ------- back --
-type Deque[T comparable] struct {
+type Deque[T any] struct {
 	items []T
 }
 
-func NewDeque[T comparable](items []T) *Deque[T] {
+func NewDeque[T any](items []T) *Deque[T] {
 	deque := &Deque[T]{
 		items: append([]T{}, items...),
 	}
