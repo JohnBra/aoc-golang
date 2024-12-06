@@ -14,26 +14,25 @@ type Coord struct {
 type Direction struct {
 	mod  [2]int
 	next string
+	idx  int
+}
+
+type CoordWithDirection struct {
+	r, c, d int
 }
 
 var direction map[string]Direction = map[string]Direction{
-	"^": {[2]int{-1, 0}, ">"},
-	">": {[2]int{0, 1}, "v"},
-	"v": {[2]int{1, 0}, "<"},
-	"<": {[2]int{0, -1}, "^"},
+	"^": {[2]int{-1, 0}, ">", 0},
+	">": {[2]int{0, 1}, "v", 1},
+	"v": {[2]int{1, 0}, "<", 2},
+	"<": {[2]int{0, -1}, "^", 3},
 }
 
-var d map[int][3]int = map[int][3]int{
-	0: {-1, 0, 1},
-	1: {0, 1, 2},
-	2: {1, 0, 3},
-	3: {0, -1, 0},
-}
-
-func partOne(board [][]string) int {
+func partOne(board [][]string) (int, bool) {
 	rows, cols := len(board), len(board[0])
 	q := ds.NewDeque([]Coord{})
-	set := ds.NewSet[Coord]()
+	visit := ds.NewSet[Coord]()
+	cycle := ds.NewSet[CoordWithDirection]()
 	var dir Direction
 
 	// find caret
@@ -43,7 +42,8 @@ func partOne(board [][]string) int {
 			if board[r][c] != "." && board[r][c] != "#" {
 				dir = direction[board[r][c]]
 				q.PushBack(Coord{r, c})
-				set.Add(Coord{r, c})
+				visit.Add(Coord{r, c})
+				cycle.Add(CoordWithDirection{r, c, dir.idx})
 			}
 		}
 	}
@@ -62,26 +62,51 @@ func partOne(board [][]string) int {
 			continue
 		}
 
+		// Only add next field if can actually walk it
 		q.PushBack(next)
-		set.Add(next)
+		visit.Add(next)
+
+		// For part two track cycle
+		nextWithDir := CoordWithDirection{next.r, next.c, dir.idx}
+		if cycle.Contains(nextWithDir) {
+			return len(visit), true
+		}
+		cycle.Add(nextWithDir)
 	}
 
-	return len(set)
+	return len(visit), false
 }
 
-func partTwo(board [][]int) int {
+func partTwo(board [][]string) int {
 	// brute force
 	// put an obstacle on each field (one at a time; if not alreay one)
 	// execute part one
 	// if on field with same direction twice -> cycle
+	rows, cols := len(board), len(board[0])
+	res := 0
+	for r := range rows {
+		for c := range cols {
+			if board[r][c] == "." {
+				board[r][c] = "#"
+				_, cycle := partOne(board)
+				if cycle {
+					res += 1
+				}
+				board[r][c] = "."
+			}
+		}
+	}
 
-	return 0
+	return res
 }
 
 func main() {
-	contents, err := utils.GetFileContentsAsStringMatrix("test.txt", ``)
+	contents, err := utils.GetFileContentsAsStringMatrix("input.txt", ``)
 	utils.Check(err)
 
-	distinctFields := partOne(contents)
+	distinctFields, _ := partOne(contents)
 	fmt.Println("Distinct fields: ", distinctFields)
+
+	obstructions := partTwo(contents)
+	fmt.Println("Obstructions: ", obstructions)
 }
