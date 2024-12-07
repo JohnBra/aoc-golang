@@ -111,3 +111,29 @@ func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {
 
 	return res, nil
 }
+
+// Returns bigints but as strings
+func GetFileContentsAsBigintMatrix(filepath string) ([][]string, error) {
+	file, err := os.Open(filepath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	re := regexp.MustCompile(`\d+`)
+	scanner := bufio.NewScanner(file)
+	var res [][]string
+
+	for scanner.Scan() {
+		strings := re.FindAllString(scanner.Text(), -1)
+		res = append(res, strings)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
