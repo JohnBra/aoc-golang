@@ -85,9 +85,14 @@ func partTwo(contents string) int {
 
 	return res
 }
+
+func parseLine(line string) (string, error) {
+	return line, nil
+}
+
 func main() {
 	// load file contents as one line string
-	contents, err := utils.GetFileContentsAsString("./input.txt")
+	contents, err := utils.AccumulateLineResultFromFile("./input.txt", parseLine)
 	utils.Check(err)
 	multiplications := partOne(contents)
 	fmt.Printf("Multiplications: %d\n", multiplications)

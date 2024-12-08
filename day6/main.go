@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	ds "github.com/JohnBra/aoc-2024/internal/datastructures"
 	"github.com/JohnBra/aoc-2024/internal/utils"
@@ -100,8 +101,12 @@ func partTwo(board [][]string) int {
 	return res
 }
 
+func parseLine(line string) ([]string, error) {
+	return strings.Split(line, ``), nil
+}
+
 func main() {
-	contents, err := utils.GetFileContentsAsStringMatrix("input.txt", ``)
+	contents, err := utils.GetSliceOfSlicesFromFile("./input.txt", parseLine)
 	utils.Check(err)
 
 	distinctFields, _ := partOne(contents)
