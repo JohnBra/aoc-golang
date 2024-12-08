@@ -71,7 +71,7 @@ func main() {
 	partOneRes := partOne(intMatrix)
 	fmt.Println("Total calibration result: ", partOneRes)
 
-	bigintMatrix, err := utils.GetFileContentsAsBigintMatrix("./input.txt")
+	bigintMatrix, err := utils.GetFileContentsAsNumberMatrix("./input.txt")
 	utils.Check(err)
 
 	partTwoRes := partTwo(bigintMatrix)

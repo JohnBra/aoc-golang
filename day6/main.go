@@ -108,5 +108,5 @@ func main() {
 	fmt.Println("Distinct fields: ", distinctFields)
 
 	obstructions := partTwo(contents)
-	fmt.Println("Obstructions: ", obstructions)
+	fmt.Println("Possible obstructions: ", obstructions)
 }
