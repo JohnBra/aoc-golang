@@ -1,6 +1,14 @@
-# Advent of Code 2024
+# Advent of Code 2024 - Go
 
-Using advent of code familiarize myself with golang. Just gophin around.
+Using advent of code familiarize myself with golang.
+
+The goal is to solve all puzzles with no external packages, meaning I will
+implement datastructures, algorithms, etc. in go.
+
+I believe this helps me get used to the syntax and understand many if not most
+of the language features.
+
+The project structure may change over time as I add solutions and packages.
 
 ## Usage
 
