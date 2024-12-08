@@ -2,6 +2,9 @@ package datastructures
 
 type Graph[T comparable] map[T]Set[T]
 
+// Creates a new directed graph
+//
+// edge: [source, dest]
 func NewGraph[T comparable](edges [][2]T, vertices []T) Graph[T] {
 	graph := Graph[T]{}
 
@@ -14,6 +17,9 @@ func NewGraph[T comparable](edges [][2]T, vertices []T) Graph[T] {
 	return graph
 }
 
+// Adds one or more directed edges to the graph
+//
+// edge: [source, dest]
 func (g Graph[T]) AddEdges(edges ...[2]T) {
 	for _, e := range edges {
 		_, ok := g[e[0]]
