@@ -67,7 +67,7 @@ func getIntMatricesFromContents(filepath string) ([][2]int, [][]int, error) {
 // check if there is an overlap between ordering set for cur val
 // and preceding pages added to set, if yes break (ignore this update)
 // if no add current number to set
-func partOne(graph map[int]ds.Set[int], updates [][]int) (int, [][]int) {
+func partOne(graph ds.Graph[int], updates [][]int) (int, [][]int) {
 	var invalidUpdates [][]int
 	validRes := 0
 	preceding := ds.NewSet[int]()
