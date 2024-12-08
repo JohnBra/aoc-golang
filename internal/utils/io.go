@@ -9,15 +9,26 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Types that can be added to each other
+// Personal notes:
 //
-// Hijacked the Ordered constraint
+// Interesting read on bufio.Scanner vs os.ReadFile:
+// https://medium.com/golicious/comparing-ioutil-readfile-and-bufio-scanner-ddd8d6f18463
+//
+// Gist: bufio.Scanner is less performant than os.ReadFile but can read line by line
+//
+// To read a whole file it can be better to use os.ReadFile like in this SO answer:
+// https://stackoverflow.com/a/66804541
+
+// Types that can be added to each other respectively
 type accumulable interface {
-	constraints.Ordered
+	constraints.Integer | constraints.Float | ~string
 }
 
 // Parses file line by line with parse func
 // and adds result of type T to accumulative result of type T
+//
+// NOTE: returns error with lines longer than 65536 characters.
+// configure buffer size if necessary: https://pkg.go.dev/bufio#Scanner.Buffer
 func AccumulateLineResultFromFile[T accumulable](
 	filepath string,
 	parse func(line string) (T, error),
@@ -53,6 +64,9 @@ func AccumulateLineResultFromFile[T accumulable](
 
 // Parses file line by line with parse func
 // and appends parse result slice of type T to result slice
+//
+// NOTE: returns error with lines longer than 65536 characters.
+// configure buffer size if necessary: https://pkg.go.dev/bufio#Scanner.Buffer
 func GetSliceOfSlicesFromFile[T any](
 	filepath string,
 	parse func(line string) (T, error),
