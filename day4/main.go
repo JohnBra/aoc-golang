@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/JohnBra/aoc-2024/internal/utils"
@@ -122,10 +123,14 @@ func partTwo(contents [][]string) int {
 	return res / 2
 }
 
+func parseLine(line string) ([]string, error) {
+	return strings.Split(line, ``), nil
+}
+
 func main() {
 	// load contents for both parts as
 	// rune matrix
-	contents, err := utils.GetFileContentsAsStringMatrix("./input.txt", ``)
+	contents, err := utils.GetSliceOfSlicesFromFile("./input.txt", parseLine)
 	utils.Check(err)
 
 	xMasCount := partOne(contents)
