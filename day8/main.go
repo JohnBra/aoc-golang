@@ -18,14 +18,14 @@ func calcAntinode(a Coord, b Coord) Coord {
 }
 
 // day8 part 1
-// add all antennas to a map: antenna -> coord
+// add all antennas to a map: antenna -> []coord
 // iterate through all keys (antennas) in map, calculate
 // potential antinodes coords and add coords to set if in bounds of matrix
 //
 // day8 part 2
 // add all antenna coords to antinode set AND
 // when calculating antinodes also add new calculated antinode coord and closest
-// coord used in previous antinode calculation to a q if in bounds of matrix
+// coord used in previous antinode calculation to a queue if in bounds of matrix
 // after initial antennas on map are done (part one) calculate antinodes
 // for each antinode tuple in q and add new potential antinodes to q until
 // calculated antinodes are out of bounds

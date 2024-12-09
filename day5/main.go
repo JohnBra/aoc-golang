@@ -100,7 +100,8 @@ func partTwo(graph ds.Graph[int], updates [][]int) int {
 	res := 0
 
 	for _, update := range updates {
-		order := graph.TopologicalOrder(update)
+		order, err := graph.TopologicalOrder(update)
+		utils.Check(err)
 		corrected := utils.SortListByOrder(update, order)
 
 		res += corrected[len(corrected)/2]

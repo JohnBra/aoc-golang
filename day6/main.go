@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	ds "github.com/JohnBra/aoc-2024/internal/datastructures"
 	"github.com/JohnBra/aoc-2024/internal/utils"
@@ -79,6 +80,7 @@ func partOne(board [][]string) (int, bool) {
 }
 
 func partTwo(board [][]string) int {
+	defer utils.TimeTrack(time.Now(), "Day 8 part 2")
 	// brute force
 	// put an obstacle on each field (one at a time; if not alreay one)
 	// execute part one

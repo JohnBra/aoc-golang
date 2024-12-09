@@ -1,5 +1,7 @@
 package datastructures
 
+import "fmt"
+
 type Graph[T comparable] map[T]Set[T]
 
 // Creates a new directed graph
@@ -32,7 +34,8 @@ func (g Graph[T]) AddEdges(edges ...[2]T) {
 	}
 }
 
-func (g Graph[T]) TopologicalOrder(vertices []T) []T {
+// returns topoligical order for provided vertices
+func (g Graph[T]) TopologicalOrder(vertices []T) ([]T, error) {
 	var order []T
 	// count of directed edges (from node pointing to node)
 	inDegree := map[T]int{}
@@ -43,11 +46,15 @@ func (g Graph[T]) TopologicalOrder(vertices []T) []T {
 		}
 	}
 
-	queue := NewDeque[T]([]T{})
+	queue := NewDeque([]T{})
 	for _, node := range vertices {
 		if inDegree[node] == 0 {
 			queue.PushBack(node)
 		}
+	}
+
+	if queue.Len() == 0 {
+		return order, fmt.Errorf("no vertices with in degree of 0")
 	}
 
 	for queue.Len() > 0 {
@@ -64,5 +71,5 @@ func (g Graph[T]) TopologicalOrder(vertices []T) []T {
 		}
 	}
 
-	return order
+	return order, nil
 }

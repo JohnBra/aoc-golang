@@ -9,15 +9,16 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-// Personal notes:
-//
-// Interesting read on bufio.Scanner vs os.ReadFile:
-// https://medium.com/golicious/comparing-ioutil-readfile-and-bufio-scanner-ddd8d6f18463
-//
-// Gist: bufio.Scanner is less performant than os.ReadFile but can read line by line
-//
-// To read a whole file it can be better to use os.ReadFile like in this SO answer:
-// https://stackoverflow.com/a/66804541
+/* Personal notes:
+
+Interesting read on bufio.Scanner vs os.ReadFile:
+https://medium.com/golicious/comparing-ioutil-readfile-and-bufio-scanner-ddd8d6f18463
+
+Gist: bufio.Scanner is less performant than os.ReadFile but can read line by line
+
+To read a whole file it can be better to use os.ReadFile like in this SO answer:
+https://stackoverflow.com/a/66804541
+*/
 
 // Types that can be added to each other respectively
 type accumulable interface {
@@ -117,7 +118,7 @@ func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {
 	})
 }
 
-// Returns slice of slices of numbers but as strings
+// Returns slice of slices of positive integers but as strings
 func GetFileContentsAsNumberMatrix(filepath string) ([][]string, error) {
 	re := regexp.MustCompile(`\d+`)
 
