@@ -6,6 +6,8 @@ import (
 	"os"
 	"slices"
 	"strings"
+
+	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
 func readFile(filepath string) []rune {
@@ -166,7 +168,7 @@ func partTwo(runes []rune) int {
 }
 
 func main() {
-	p1input := readFile("9.in")
+	p1input := readFile(utils.GetPuzzleInputSrc())
 	p2input := make([]rune, len(p1input))
 	_ = copy(p2input, p1input)
 

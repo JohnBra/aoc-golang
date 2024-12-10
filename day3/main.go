@@ -92,7 +92,7 @@ func parseLine(line string) (string, error) {
 
 func main() {
 	// load file contents as one line string
-	contents, err := utils.AccumulateLineResultFromFile("./input.txt", parseLine)
+	contents, err := utils.AccumulateLineResultFromFile(utils.GetPuzzleInputSrc(), parseLine)
 	utils.Check(err)
 	multiplications := partOne(contents)
 	fmt.Printf("Multiplications: %d\n", multiplications)

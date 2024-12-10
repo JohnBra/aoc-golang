@@ -65,13 +65,14 @@ func partTwo(equations [][]string) string {
 }
 
 func main() {
-	intMatrix, err := utils.GetFileContentsAsIntMatrix("./input.txt")
+	puzzleInput := utils.GetPuzzleInputSrc()
+	intMatrix, err := utils.GetFileContentsAsIntMatrix(puzzleInput)
 	utils.Check(err)
 
 	partOneRes := partOne(intMatrix)
 	fmt.Println("Total calibration result: ", partOneRes)
 
-	bigintMatrix, err := utils.GetFileContentsAsNumberMatrix("./input.txt")
+	bigintMatrix, err := utils.GetFileContentsAsNumberMatrix(puzzleInput)
 	utils.Check(err)
 
 	partTwoRes := partTwo(bigintMatrix)

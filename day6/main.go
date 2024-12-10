@@ -108,7 +108,7 @@ func parseLine(line string) ([]string, error) {
 }
 
 func main() {
-	contents, err := utils.GetSliceOfSlicesFromFile("./input.txt", parseLine)
+	contents, err := utils.GetSliceOfSlicesFromFile(utils.GetPuzzleInputSrc(), parseLine)
 	utils.Check(err)
 
 	distinctFields, _ := partOne(contents)

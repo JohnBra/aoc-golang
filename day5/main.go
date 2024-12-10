@@ -111,7 +111,7 @@ func partTwo(graph ds.Graph[int], updates [][]int) int {
 }
 
 func main() {
-	edges, updates, err := getIntMatricesFromContents("./input.txt")
+	edges, updates, err := getIntMatricesFromContents(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 	// all items in set must be after key of map
 	graph := ds.NewGraph(edges, []int{})

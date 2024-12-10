@@ -106,7 +106,7 @@ func parseLine(line string) ([]string, error) {
 }
 
 func main() {
-	matrix, err := utils.GetSliceOfSlicesFromFile("./8.in", parseLine)
+	matrix, err := utils.GetSliceOfSlicesFromFile(utils.GetPuzzleInputSrc(), parseLine)
 	utils.Check(err)
 
 	partOneRes, partTwoRes := getAntinodes(matrix)
