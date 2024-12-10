@@ -43,7 +43,7 @@ func main() {
 	utils.Check(err)
 
 	if len(lists) != 2 {
-		panic(fmt.Errorf("Input should have two columns exactly"))
+		panic(fmt.Errorf("input should have two columns exactly"))
 	}
 
 	// day1 part 1
