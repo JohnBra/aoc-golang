@@ -22,7 +22,7 @@ func dfs(
 	head [2]int,
 	visit ds.Set[[2]int],
 	r, c, prevVal int,
-) int {
+) (int, int) {
 
 	if r < 0 ||
 		c < 0 ||
@@ -30,10 +30,11 @@ func dfs(
 		c == len(matrix[0]) ||
 		visit.Contains([2]int{r, c}) ||
 		matrix[r][c] != prevVal+1 {
-		return 0
+		return 0, 0
 	}
 
 	if matrix[r][c] == 9 {
+		score, rating := 0, 1
 		key := [2]int{r, c}
 		_, ok := peaks[key]
 		if !ok {
@@ -42,42 +43,47 @@ func dfs(
 
 		if !peaks[key].Contains(head) {
 			peaks[key].Add(head)
-			return 1
-		} else {
-			return 0
+			score = 1
 		}
+		return score, rating
 	}
 
 	visit.Add([2]int{r, c})
 
-	res := 0
+	score, rating := 0, 0
 	for _, dir := range dirs {
-		res += dfs(matrix, peaks, head, visit, r+dir[0], c+dir[1], matrix[r][c])
+		sc, ra := dfs(matrix, peaks, head, visit, r+dir[0], c+dir[1], matrix[r][c])
+		score += sc
+		rating += ra
 	}
 
 	visit.Remove([2]int{r, c})
 
-	return res
+	return score, rating
 }
 
-func partOne(matrix [][]int) int {
-	res := 0
+// day10 part 1 and 2 solution
+// simple dfs to find each hiking trail
+// iterate through matrix, start hiking (dfs) when field == 0
+// find every possible path where current matrix val == prevVal + 1
+// use map to track if specific trailhead has already hit peak (scores/part one)
+// ratings will be every distinct hiking path (ratings/part two)
+func hike(matrix [][]int) (int, int) {
+	scores, ratings := 0, 0
 	rows, cols := len(matrix), len(matrix[0])
 	peaks := map[[2]int]ds.Set[[2]int]{}
 	visit := ds.NewSet[[2]int]()
 
-	for _, row := range matrix {
-		fmt.Println(row)
-	}
-
 	for r := range rows {
 		for c := range cols {
 			if matrix[r][c] == 0 {
-				res += dfs(matrix, peaks, [2]int{r, c}, visit, r, c, -1)
+				sc, ra := dfs(matrix, peaks, [2]int{r, c}, visit, r, c, -1)
+				scores += sc
+				ratings += ra
 			}
 		}
 	}
-	return res
+	return scores, ratings
 }
 
 func parseLine(line string) ([]int, error) {
@@ -99,6 +105,7 @@ func main() {
 	matrix, err := utils.GetSliceOfSlicesFromFile(src, parseLine)
 	utils.Check(err)
 
-	partOneRes := partOne(matrix)
+	partOneRes, partTwoRes := hike(matrix)
 	fmt.Println("Scores", partOneRes)
+	fmt.Println("Ratings", partTwoRes)
 }
