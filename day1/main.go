@@ -37,7 +37,7 @@ func main() {
 	// read lines from input
 	// create two lists left / right respectively
 
-	contents, err := utils.GetFileContentsAsIntMatrix("./input.txt")
+	contents, err := utils.GetFileContentsAsIntMatrix(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 	lists, err := utils.Zip(contents)
 	utils.Check(err)

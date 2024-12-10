@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"flag"
 	"os"
 	"regexp"
 	"strconv"
@@ -18,7 +19,16 @@ Gist: bufio.Scanner is less performant than os.ReadFile but can read line by lin
 
 To read a whole file it can be better to use os.ReadFile like in this SO answer:
 https://stackoverflow.com/a/66804541
+
 */
+
+func GetPuzzleInputSrc() string {
+	src := flag.String("input", "", "the path to the puzzle input")
+
+	flag.Parse()
+
+	return *src
+}
 
 // Types that can be added to each other respectively
 type accumulable interface {
