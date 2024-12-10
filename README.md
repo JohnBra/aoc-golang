@@ -1,6 +1,6 @@
 # Advent of Code - Go
 
-Using advent of code familiarize myself with golang.
+Using advent of code to familiarize myself with golang.
 
 The goal is to solve all puzzles without external packages. Forcing myself
 to build things like datastructures and algorithms from scratch.
