@@ -25,35 +25,45 @@ func times2024(s string) (string, error) {
 	return big.NewInt(0).Mul(n, big.NewInt(2024)).String(), nil
 }
 
+func split(s string) (string, string) {
+	first := strings.TrimLeft(s[:len(s)/2], "0")
+	second := strings.TrimLeft(s[len(s)/2:], "0")
+
+	if first == "" {
+		first = "0"
+	}
+
+	if second == "" {
+		second = "0"
+	}
+	return first, second
+}
+
+// day11 part 1
+// create doubly linked list
+// add elements for every blink according to rules
+// return length of list
 func partOne(input []string) int {
 	stones := list.New()
-	stones.PushBack("head") // dummy element
 
 	for _, s := range input {
 		stones.PushBack(s)
 	}
 
-	stones.PushBack("tail") // dummy element
+	stones.PushFront("head") // dummy element
+	stones.PushBack("tail")  // dummy element
 
 	for i := 0; i < 25; i++ {
+
 		cur := stones.Front().Next()
+
 		for cur != stones.Back() {
 			val := cur.Value.(string)
 
 			if val == "0" {
 				cur.Value = "1"
 			} else if len(val)%2 == 0 {
-				first := strings.TrimLeft(val[:len(val)/2], "0")
-				second := strings.TrimLeft(val[len(val)/2:], "0")
-
-				if first == "" {
-					first = "0"
-				}
-
-				if second == "" {
-					second = "0"
-				}
-
+				first, second := split(val)
 				stones.InsertBefore(first, cur)
 				c := stones.InsertAfter(second, cur)
 				stones.Remove(cur)
@@ -65,9 +75,65 @@ func partOne(input []string) int {
 			}
 			cur = cur.Next()
 		}
+
+	}
+	stones.Remove(stones.Front())
+	stones.Remove(stones.Back())
+
+	return stones.Len()
+}
+
+// day11 part 2
+// create map for stones (stone -> count of stone)
+// memoize splits
+// memoize conversions from 0 -> 1 and num -> num * 2024
+// iterate through stones map for each blink and calc
+// new values
+// return sum of final stones values
+func partTwo(input []string) int {
+	stones := map[string]int{}
+	splits := map[string][2]string{}    // memo for number splits into two
+	conv := map[string]string{"0": "1"} // memo for calculations
+
+	for _, s := range input {
+		stones[s] += 1
 	}
 
-	return stones.Len() - 2
+	for i := 0; i < 75; i++ {
+		nStones := map[string]int{}
+		for stone, count := range stones {
+			if stone != "0" && len(stone)%2 == 0 {
+				var first, second string
+				s, ok := splits[stone]
+				if ok {
+					first, second = s[0], s[1]
+				} else {
+					first, second = split(stone)
+					splits[stone] = [2]string{first, second}
+				}
+
+				nStones[first] += count
+				nStones[second] += count
+			} else {
+				s, ok := conv[stone]
+				if !ok {
+					m, err := times2024(stone)
+					utils.Check(err)
+					conv[stone] = m
+					s = m
+				}
+				nStones[s] += count
+			}
+		}
+		stones = nStones
+	}
+
+	res := 0
+	for _, count := range stones {
+		res += count
+	}
+
+	return res
 }
 
 func main() {
@@ -77,6 +143,6 @@ func main() {
 	partOneRes := partOne(nums[0])
 	fmt.Println("Number of stones (25 blinks)", partOneRes)
 
-	//partTwoRes := partTwo(nums[0])
-	//fmt.Println("Number of stones (75 blinks)", partTwoRes)
+	partTwoRes := partTwo(nums[0])
+	fmt.Println("Number of stones (75 blinks)", partTwoRes)
 }
