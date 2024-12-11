@@ -26,8 +26,9 @@ performant than os.ReadFile but can read line by line.
 - To read a whole file it can be better to use os.ReadFile like in [this Stack Overflow answer](https://stackoverflow.com/a/66804541).
 - `scanner` throws error if line > 65536 characters by default. Configue [according to this](https://pkg.go.dev/testing#hdr-Benchmarks).
 
-### Benchmarking
+### Benchmarking & Testing
 
 - [Benchmarking](https://pkg.go.dev/testing#hdr-Benchmarks) docs
 - Benchmarking funcs measure the whole function, not just the loop. Reset timer 
 after expensive set up
+- [Blog post](https://medium.com/hyperskill/testing-and-benchmarking-in-go-e33a54b413e) on testing and benchmarking.
