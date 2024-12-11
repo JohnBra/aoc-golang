@@ -26,12 +26,8 @@ func times2024(s string) (string, error) {
 }
 
 func split(s string) (string, string) {
-	first := strings.TrimLeft(s[:len(s)/2], "0")
+	first := s[:len(s)/2]
 	second := strings.TrimLeft(s[len(s)/2:], "0")
-
-	if first == "" {
-		first = "0"
-	}
 
 	if second == "" {
 		second = "0"
