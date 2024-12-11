@@ -25,7 +25,7 @@ func times2024(s string) (string, error) {
 	return big.NewInt(0).Mul(n, big.NewInt(2024)).String(), nil
 }
 
-func blink(input []string) int {
+func partOne(input []string) int {
 	stones := list.New()
 	stones.PushBack("head") // dummy element
 
@@ -53,6 +53,7 @@ func blink(input []string) int {
 				if second == "" {
 					second = "0"
 				}
+
 				stones.InsertBefore(first, cur)
 				c := stones.InsertAfter(second, cur)
 				stones.Remove(cur)
@@ -66,14 +67,6 @@ func blink(input []string) int {
 		}
 	}
 
-	tmp := stones.Front().Next()
-	fmt.Print("Stones ")
-	for tmp != stones.Back() {
-		fmt.Print(" ", tmp.Value, " ")
-		tmp = tmp.Next()
-	}
-	fmt.Println("")
-
 	return stones.Len() - 2
 }
 
@@ -83,4 +76,7 @@ func main() {
 
 	partOneRes := partOne(nums[0])
 	fmt.Println("Number of stones (25 blinks)", partOneRes)
+
+	//partTwoRes := partTwo(nums[0])
+	//fmt.Println("Number of stones (75 blinks)", partTwoRes)
 }
