@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	ds "github.com/JohnBra/aoc-2024/internal/datastructures"
 	"github.com/JohnBra/aoc-2024/internal/utils"
@@ -64,7 +63,6 @@ func dfs(
 // use map to track if specific trailhead has already hit peak (scores/part one)
 // ratings will be every distinct hiking path (ratings/part two)
 func hikeRecursive(matrix [][]int) (int, int) {
-	defer utils.TimeTrack(time.Now(), "hike recursive")
 	scores, ratings := 0, 0
 	rows, cols := len(matrix), len(matrix[0])
 	peaks := map[[2]int]ds.Set[[2]int]{}
@@ -83,7 +81,6 @@ func hikeRecursive(matrix [][]int) (int, int) {
 
 // Iterative version to the solution for the fun of it
 func hikeIterative(matrix [][]int) (int, int) {
-	defer utils.TimeTrack(time.Now(), "hike iterative")
 	scores, ratings := 0, 0
 	rows, cols := len(matrix), len(matrix[0])
 	// stack item: [r, c]

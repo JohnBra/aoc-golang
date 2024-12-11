@@ -10,18 +10,6 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-/* Personal notes:
-
-Interesting read on bufio.Scanner vs os.ReadFile:
-https://medium.com/golicious/comparing-ioutil-readfile-and-bufio-scanner-ddd8d6f18463
-
-Gist: bufio.Scanner is less performant than os.ReadFile but can read line by line
-
-To read a whole file it can be better to use os.ReadFile like in this SO answer:
-https://stackoverflow.com/a/66804541
-
-*/
-
 func GetPuzzleInputSrc() string {
 	src := flag.String("input", "", "the path to the puzzle input")
 

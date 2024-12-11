@@ -1,0 +1,26 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/JohnBra/aoc-2024/2024/10
+cpu: Apple M1 Pro
+BenchmarkHikeRecursive-10    	  153488	      6749 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  183619	      6517 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  186122	      6508 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  186242	      6461 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  186390	      6451 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  186362	      6493 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  185743	      6461 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  184096	      6502 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  183427	      6614 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeRecursive-10    	  181825	      6691 ns/op	    1344 B/op	      14 allocs/op
+BenchmarkHikeIterative-10    	  183583	      6591 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  185281	      6807 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  173274	      6647 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  169587	      6530 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  187636	      6433 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  188689	      6459 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  182479	      6723 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  185037	      6607 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  185500	      6505 ns/op	    1840 B/op	      19 allocs/op
+BenchmarkHikeIterative-10    	  187146	      6422 ns/op	    1840 B/op	      19 allocs/op
+PASS
+ok  	github.com/JohnBra/aoc-2024/2024/10	25.839s
