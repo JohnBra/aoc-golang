@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"math/big"
 	"os"
 	"regexp"
 	"strconv"
@@ -38,6 +39,10 @@ func dfs(dp map[[2]int]int, g [6]int, a, b int) int {
 	return dp[cur]
 }
 
+// day13 part 1
+// recursively check combinations up until 100 or result reached
+// memoize the results, return cache value if exist
+// return minimum coin value
 func partOne(games [][6]int) int {
 	res := 0
 
@@ -50,6 +55,44 @@ func partOne(games [][6]int) int {
 	}
 
 	return res
+}
+
+// day13 part 2
+// Solves the linear equation by solving for a
+// then solving for b and substituting
+// modify each game result with +10000000000000 before calculating
+// use big int, otherwise integer overflow
+func partTwo(games [][6]int) string {
+	res := big.NewInt(0)
+
+	for _, g := range games {
+		g[4] += 10000000000000
+		g[5] += 10000000000000
+		// 			t1			t2			t3			t4
+		//a := (g[4]*g[3] - g[5]*g[2]) / (g[0]*g[3] - g[1]*g[2])
+		//			t5			t6			t3			t4
+		//b := (g[0]*g[5] - g[1]*g[4]) / (g[0]*g[3] - g[1]*g[2])
+
+		t1 := big.NewInt(0).Mul(big.NewInt(int64(g[4])), big.NewInt(int64(g[3])))
+		t2 := big.NewInt(0).Mul(big.NewInt(int64(g[5])), big.NewInt(int64(g[2])))
+		t3 := big.NewInt(int64(g[0] * g[3]))
+		t4 := big.NewInt(int64(g[1] * g[2]))
+		t5 := big.NewInt(0).Mul(big.NewInt(int64(g[0])), big.NewInt(int64(g[5])))
+		t6 := big.NewInt(0).Mul(big.NewInt(int64(g[1])), big.NewInt(int64(g[4])))
+		t1Mt2 := big.NewInt(0).Sub(t1, t2)
+		t3Mt4 := big.NewInt(0).Sub(t3, t4)
+		t5Mt6 := big.NewInt(0).Sub(t5, t6)
+		a, aRest := big.NewInt(0).DivMod(t1Mt2, t3Mt4, big.NewInt(1))
+		b, bRest := big.NewInt(0).DivMod(t5Mt6, t3Mt4, big.NewInt(1))
+
+		if aRest.String() == "0" && bRest.String() == "0" {
+			a.Mul(a, big.NewInt(3))
+			tokens := big.NewInt(0).Add(a, b)
+			res.Add(res, tokens)
+		}
+	}
+
+	return res.String()
 }
 
 func getInput(filepath string) ([][6]int, error) {
@@ -88,5 +131,8 @@ func main() {
 	utils.Check(err)
 
 	partOneRes := partOne(input)
-	fmt.Println("Fewest tokens to win prizes", partOneRes)
+	fmt.Println("Part one tokens", partOneRes)
+
+	partTwoRes := partTwo(input)
+	fmt.Println("Part two tokens", partTwoRes)
 }
