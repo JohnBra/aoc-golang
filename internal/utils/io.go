@@ -100,7 +100,7 @@ func GetSliceOfSlicesFromFile[T any](
 }
 
 func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {
-	re := regexp.MustCompile(`\d+`)
+	re := regexp.MustCompile(`-\d+|\d+`)
 
 	return GetSliceOfSlicesFromFile(filepath, func(line string) ([]int, error) {
 		strings := re.FindAllString(line, -1)
