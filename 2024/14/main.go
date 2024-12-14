@@ -27,14 +27,6 @@ func addLabel(img *image.RGBA, x, y int, label string) {
 	d.DrawString(label)
 }
 
-func setBackground(img *image.RGBA, w, h int) {
-	for y := range h {
-		for x := range w {
-			img.Set(x, y, color.RGBA{24, 24, 24, 255})
-		}
-	}
-}
-
 func simulateRobots(robots [][]int) int {
 	// map has 103 rows and 101 columns / image is 101 px wide and 103 px high
 	const seconds = 10000
@@ -42,7 +34,6 @@ func simulateRobots(robots [][]int) int {
 	const rows, cols = 103, 101
 	const w, h = cols * variations, rows * variations
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
-	setBackground(img, w, h)
 
 	i := 1
 	for imgRow := range variations {
