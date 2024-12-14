@@ -37,7 +37,8 @@ func setBackground(img *image.RGBA, w, h int) {
 
 func simulateRobots(robots [][]int) int {
 	// map has 103 rows and 101 columns / image is 101 px wide and 103 px high
-	const variations = 100
+	const seconds = 10000
+	const variations = seconds / 100
 	const rows, cols = 103, 101
 	const w, h = cols * variations, rows * variations
 	img := image.NewRGBA(image.Rect(0, 0, w, h))

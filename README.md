@@ -2,11 +2,6 @@
 
 Using advent of code to familiarize myself with golang.
 
-The goal is to solve all puzzles without external packages. Forcing myself
-to build things like datastructures and algorithms from scratch.
-
-The project structure may change over time as I add solutions and packages.
-
 ## Usage
 
 1. Get your inputs for each day on the [official website](https://adventofcode.com/2024)
