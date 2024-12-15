@@ -33,6 +33,34 @@ func moveRobotOne(matrix [][]rune, r, c int, move rune) bool {
 	return push
 }
 
+func robotCanMove(matrix [][]rune, r, c int, move rune) bool {
+	if utils.IsOutOfBounds(matrix, r, c) || matrix[r][c] == '#' {
+		return false
+	}
+
+	if matrix[r][c] == '.' {
+		return true
+	}
+	push := false
+
+	if move == '<' || move == '>' {
+		nextR, nextC := r+dir[move][0], c+dir[move][1]
+		push = robotCanMove(matrix, nextR, nextC, move)
+	} else {
+		nei := 0
+
+		if matrix[r][c] == '[' {
+			nei = 1
+		} else if matrix[r][c] == ']' {
+			nei = -1
+		}
+
+		nextR, nextC := r+dir[move][0], c+dir[move][1]
+		push = robotCanMove(matrix, nextR, nextC, move) && robotCanMove(matrix, nextR, nextC+nei, move)
+	}
+	return push
+}
+
 func moveRobotTwo(matrix [][]rune, r, c int, move rune) bool {
 	// should never be out of bounds
 	if utils.IsOutOfBounds(matrix, r, c) || matrix[r][c] == '#' {
@@ -134,23 +162,16 @@ func partOne(matrix [][]rune, moves []rune) int {
 func partTwo(matrix [][]rune, moves []rune) int {
 	res := 0
 	robot := getRobotPosition(matrix)
-	fmt.Println("part 2 start")
-	for _, row := range matrix {
-		fmt.Println(string(row))
-	}
 
 	for _, m := range moves {
 		nextR, nextC := robot[0]+dir[m][0], robot[1]+dir[m][1]
-		if moveRobotTwo(matrix, nextR, nextC, m) {
+		if robotCanMove(matrix, nextR, nextC, m) {
+			moveRobotTwo(matrix, nextR, nextC, m)
 			matrix[robot[0]][robot[1]] = '.'
 			robot[0] += dir[m][0]
 			robot[1] += dir[m][1]
 			matrix[robot[0]][robot[1]] = '@'
 		}
-	}
-
-	for _, row := range matrix {
-		fmt.Println(string(row))
 	}
 
 	for r := range len(matrix) {
