@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 // shitty O(n) get index function
@@ -90,4 +92,12 @@ func Zip[T any](tuples [][]T) ([][]T, error) {
 	}
 
 	return res, nil
+}
+
+func IntSliceToString(nums []int, sep string) string {
+	str := make([]string, len(nums))
+	for i, n := range nums {
+		str[i] = strconv.Itoa(n)
+	}
+	return strings.Join(str, sep)
 }

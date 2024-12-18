@@ -9,7 +9,7 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
-func makeMatrix(memory int, corrupt [][]int, bytes int) [][]rune {
+func initMatrix(memory int, corrupt [][]int, bytes int) [][]rune {
 	matrix := make([][]rune, memory+1)
 	for r := range memory + 1 {
 		col := make([]rune, memory+1)
@@ -55,11 +55,26 @@ func partOne(matrix [][]rune) int {
 	return res
 }
 
+func partTwo(matrix [][]rune, corrupt [][]int) string {
+	for i := 1024; i < len(corrupt); i++ {
+		r, c := corrupt[i][1], corrupt[i][0]
+		matrix[r][c] = '#'
+		if partOne(matrix) == math.MaxInt {
+			return fmt.Sprintf("%d,%d", c, r)
+		}
+	}
+
+	return ""
+}
+
 func main() {
 	corrupt, err := utils.GetFileContentsAsIntMatrix(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 
-	matrix := makeMatrix(70, corrupt, 1024)
+	matrix := initMatrix(70, corrupt, 1024)
 	partOneRes := partOne(matrix)
 	fmt.Println("Part one res:", partOneRes)
+
+	partTwoRes := partTwo(matrix, corrupt)
+	fmt.Println("Part two res:", partTwoRes)
 }

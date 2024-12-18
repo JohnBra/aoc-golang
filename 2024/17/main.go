@@ -11,14 +11,6 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
-func intSliceToString(nums []int, sep string) string {
-	str := make([]string, len(nums))
-	for i, n := range nums {
-		str[i] = strconv.Itoa(n)
-	}
-	return strings.Join(str, sep)
-}
-
 func getComboOperand(op, a, b, c int) int {
 	switch op {
 	case 4:
@@ -61,7 +53,7 @@ func partOne(a, b, c int, pr []int) string {
 		i += 2
 	}
 
-	return intSliceToString(res, ",")
+	return utils.IntSliceToString(res, ",")
 }
 
 func partTwo(program []int, res int) int {
