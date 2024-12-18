@@ -11,6 +11,14 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
+func intSliceToString(nums []int, sep string) string {
+	str := make([]string, len(nums))
+	for i, n := range nums {
+		str[i] = strconv.Itoa(n)
+	}
+	return strings.Join(str, sep)
+}
+
 func getComboOperand(op, a, b, c int) int {
 	switch op {
 	case 4:
@@ -23,11 +31,9 @@ func getComboOperand(op, a, b, c int) int {
 	return op
 }
 
-func partOne(nums []int) string {
+func partOne(a, b, c int, pr []int) string {
 	// nums: a: 0; b: 1; c: 2; program: 3...n-1
-	a, b, c := nums[0], nums[1], nums[2]
-	pr := nums[3:]
-	res := ""
+	res := []int{}
 
 	i := 0
 	for i+1 < len(pr) {
@@ -46,7 +52,7 @@ func partOne(nums []int) string {
 		case 4: // bxc
 			b = b ^ c
 		case 5: // out
-			res += fmt.Sprintf("%d,", getComboOperand(pr[i+1], a, b, c)%8)
+			res = append(res, getComboOperand(pr[i+1], a, b, c)%8)
 		case 6: // bdv
 			b = int(a / utils.Pow(2, getComboOperand(pr[i+1], a, b, c)))
 		case 7: // cdv
@@ -55,11 +61,43 @@ func partOne(nums []int) string {
 		i += 2
 	}
 
-	if len(res) > 0 {
-		res = res[:len(res)-1]
+	return intSliceToString(res, ",")
+}
+
+func partTwo(program []int, res int) int {
+	/*
+		Program: 2,4, 1,1, 7,5, 1,5, 4,5, 0,3, 5,5, 3,0
+
+		b = a % 8
+		b = b ^ 1
+		c = a >> b
+		b = b ^ 5
+		b = b ^ c
+		a = a >> 3
+		print b % 8
+		a != 0 -> jump 0
+	*/
+	if len(program) == 0 {
+		return res
 	}
 
-	return res
+	for n := range 8 {
+		a := (res << 3) | n
+		b := n ^ 1
+		c := a >> b
+		b = b ^ 5
+		b = b ^ c
+
+		if b%8 == program[len(program)-1] {
+			prev := partTwo(program[:len(program)-1], a)
+			if prev == -1 {
+				continue
+			}
+			return prev
+		}
+	}
+
+	return -1
 }
 
 func parseInput(filepath string) ([]int, error) {
@@ -91,6 +129,13 @@ func main() {
 	nums, err := parseInput(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 
-	program := partOne(nums)
+	program := partOne(nums[0], nums[1], nums[2], nums[3:])
 	fmt.Println("Part one res", program)
+
+	val := partTwo(nums[3:], 0)
+	fmt.Println("Part two res", val)
+
+	fmt.Println("\nPART TWO SOLUTION ONLY WORKS FOR THIS PROGRAM:")
+	fmt.Println("2,4,1,1,7,5,1,5,4,5,0,3,5,5,3,0")
+
 }
