@@ -30,7 +30,7 @@ func partOne(matrix [][]rune) int {
 	res := math.MaxInt
 
 	// cost, r, c
-	h := &ds.MinHeap{}
+	h := &ds.IntHeap{}
 	heap.Init(h)
 	heap.Push(h, []int{0, 0, 0})
 	visit := ds.NewSet([2]int{0, 0})

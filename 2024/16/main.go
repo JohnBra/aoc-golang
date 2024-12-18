@@ -18,20 +18,19 @@ func getCost(item []int, orientation int) int {
 }
 
 func walkMaze(matrix [][]rune) int {
-	r, c := len(matrix)-2, 1
 	res := math.MaxInt
 	visit := ds.NewSet[[3]int]()
 
-	// cost, r, c, orientation
-	h := &ds.MinHeap{}
+	// minheap with items [cost, r, c, orientation]
+	h := &ds.IntHeap{}
 	heap.Init(h)
-	heap.Push(h, []int{0, r, c, 1})
+	heap.Push(h, []int{0, len(matrix) - 2, 1, 1})
 
 	for h.Len() > 0 {
 		item := heap.Pop(h).([]int)
+		visit.Add([3]int{item[1], item[2], item[3]})
 
 		if matrix[item[1]][item[2]] == 'E' {
-			fmt.Println("found path with cost", item[0])
 			if item[0] > res {
 				break
 			}
@@ -39,10 +38,10 @@ func walkMaze(matrix [][]rune) int {
 		}
 
 		for o, dir := range utils.Axes {
-			nextR, nextC := item[1]+dir[0], item[2]+dir[1]
-			if matrix[nextR][nextC] != '#' && !visit.Contains([3]int{nextR, nextC, o}) {
-				visit.Add([3]int{nextR, nextC, o})
-				heap.Push(h, []int{getCost(item, o), nextR, nextC, o})
+			nr, nc := item[1]+dir[0], item[2]+dir[1]
+			opposite := (item[3] + 2) % 4 // opposite direction to current orientation
+			if matrix[nr][nc] != '#' && o != opposite && !visit.Contains([3]int{nr, nc, o}) {
+				heap.Push(h, []int{getCost(item, o), nr, nc, o})
 			}
 		}
 	}

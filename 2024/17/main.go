@@ -124,10 +124,9 @@ func main() {
 	program := partOne(nums[0], nums[1], nums[2], nums[3:])
 	fmt.Println("Part one res", program)
 
-	val := partTwo(nums[3:], 0)
-	fmt.Println("Part two res", val)
-
 	fmt.Println("\nPART TWO SOLUTION ONLY WORKS FOR THIS PROGRAM:")
 	fmt.Println("2,4,1,1,7,5,1,5,4,5,0,3,5,5,3,0")
 
+	val := partTwo(nums[3:], 0)
+	fmt.Println("\nPart two res", val)
 }
