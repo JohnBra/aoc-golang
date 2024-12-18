@@ -1,5 +1,6 @@
 package datastructures
 
+// first item in each int slice is used for sorting
 type MinHeap [][]int
 
 func (h MinHeap) Len() int {

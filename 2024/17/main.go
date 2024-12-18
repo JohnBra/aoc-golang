@@ -39,7 +39,7 @@ func partOne(a, b, c int, pr []int) string {
 	for i+1 < len(pr) {
 		switch pr[i] {
 		case 0: // adv
-			a = int(a / utils.Pow(2, getComboOperand(pr[i+1], a, b, c)))
+			a = a >> getComboOperand(pr[i+1], a, b, c)
 		case 1: // bxl
 			b = b ^ pr[i+1]
 		case 2: // bst
@@ -54,9 +54,9 @@ func partOne(a, b, c int, pr []int) string {
 		case 5: // out
 			res = append(res, getComboOperand(pr[i+1], a, b, c)%8)
 		case 6: // bdv
-			b = int(a / utils.Pow(2, getComboOperand(pr[i+1], a, b, c)))
+			b = a >> getComboOperand(pr[i+1], a, b, c)
 		case 7: // cdv
-			c = int(a / utils.Pow(2, getComboOperand(pr[i+1], a, b, c)))
+			c = a >> getComboOperand(pr[i+1], a, b, c)
 		}
 		i += 2
 	}
