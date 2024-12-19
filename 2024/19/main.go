@@ -9,7 +9,7 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
-func dfs(patterns []string, dp map[string]int, target string) int {
+func findWays(patterns []string, dp map[string]int, target string) int {
 	if res, ok := dp[target]; ok {
 		return res
 	}
@@ -21,7 +21,7 @@ func dfs(patterns []string, dp map[string]int, target string) int {
 
 	for _, pattern := range patterns {
 		if strings.HasPrefix(target, pattern) {
-			ans += dfs(patterns, dp, target[len(pattern):])
+			ans += findWays(patterns, dp, target[len(pattern):])
 		}
 	}
 	dp[target] = ans
@@ -33,7 +33,7 @@ func solve(patterns, targets []string) (int, int) {
 	dp := map[string]int{}
 
 	for _, t := range targets {
-		res := dfs(patterns, dp, t)
+		res := findWays(patterns, dp, t)
 		if res > 1 {
 			valid += 1
 		}
