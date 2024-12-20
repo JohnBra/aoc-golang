@@ -13,7 +13,7 @@ func (m Map[T, U]) Get(key T, fallback ...U) U {
 		if len(fallback) == 1 {
 			return fallback[0]
 		} else if len(fallback) > 1 {
-			panic(fmt.Errorf("can't provide more than one fallback value to get"))
+			panic(fmt.Errorf("too many fallback values"))
 		}
 	}
 	return val
