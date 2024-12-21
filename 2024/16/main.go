@@ -88,12 +88,8 @@ func walkMaze(matrix [][]rune) (int, int) {
 	return resCost, len(seats)
 }
 
-func parseLine(line string) ([]rune, error) {
-	return []rune(line), nil
-}
-
 func main() {
-	matrix, err := utils.GetSliceOfSlicesFromFile(utils.GetPuzzleInputSrc(), parseLine)
+	matrix, err := utils.GetFileContentsAsRuneMatrix(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 
 	partOneRes, partTwoRes := walkMaze(matrix)
