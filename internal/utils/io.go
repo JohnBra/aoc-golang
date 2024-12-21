@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"golang.org/x/exp/constraints"
 )
@@ -97,6 +98,12 @@ func GetSliceOfSlicesFromFile[T any](
 	}
 
 	return res, nil
+}
+
+func GetFileContentsAsRuneMatrix(filepath string) ([][]rune, error) {
+	return GetSliceOfSlicesFromFile(filepath, func(line string) ([]rune, error) {
+		return []rune(strings.TrimSuffix(line, "\n")), nil
+	})
 }
 
 func GetFileContentsAsIntMatrix(filepath string) ([][]int, error) {

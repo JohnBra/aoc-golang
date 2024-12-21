@@ -52,5 +52,5 @@ var Directions = [8][2]int{
 }
 
 func IsOutOfBounds[T any](matrix [][]T, r, c int) bool {
-	return r < 0 || c < 0 || r == len(matrix) || c == len(matrix[0])
+	return r < 0 || c < 0 || r >= len(matrix) || c >= len(matrix[0])
 }
