@@ -19,18 +19,49 @@ func NewGraph[T comparable](edges [][2]T, vertices []T) Graph[T] {
 	return graph
 }
 
+// Creates a new undirected graph
+//
+// edges: [source, dest] and the other way around
+func NewGraphUndirected[T comparable](edges [][2]T, vertices []T) Graph[T] {
+	graph := Graph[T]{}
+
+	for _, v := range vertices {
+		graph[v] = NewSet[T]()
+	}
+
+	graph.AddEdgesUndirected(edges...)
+
+	return graph
+}
+
 // Adds one or more directed edges to the graph
 //
 // edge: [source, dest]
 func (g Graph[T]) AddEdges(edges ...[2]T) {
 	for _, e := range edges {
-		_, ok := g[e[0]]
-
-		if !ok {
+		if _, ok := g[e[0]]; !ok {
 			g[e[0]] = NewSet(e[1])
 		} else {
 			g[e[0]].Add(e[1])
 		}
+	}
+}
+
+// Adds one or more directed edges to the graph
+//
+// edge: [source, dest]
+func (g Graph[T]) AddEdgesUndirected(edges ...[2]T) {
+	for _, e := range edges {
+		if _, ok := g[e[0]]; !ok {
+			g[e[0]] = NewSet[T]()
+		}
+
+		if _, ok := g[e[1]]; !ok {
+			g[e[1]] = NewSet[T]()
+		}
+
+		g[e[0]].Add(e[1])
+		g[e[1]].Add(e[0])
 	}
 }
 

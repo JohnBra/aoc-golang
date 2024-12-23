@@ -146,8 +146,6 @@ func sliceProduct(args ...[]string) []string {
 		copy(newresult, result)
 		results = append(results, newresult)
 	}
-
-	return nil
 }
 
 func getPossibleRobotPaths(spaths map[rune]ShortestPathsTo, code string) []string {
