@@ -23,6 +23,8 @@ var Axes = [4][2]int{
 	{0, -1}, // ⬅️
 }
 
+var AxesArrows = []rune{'^', '>', 'v', '<'}
+
 var Diagonals = [4][2]int{
 	{1, 1},   // ↘
 	{1, -1},  // ↙️

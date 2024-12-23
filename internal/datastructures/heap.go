@@ -1,36 +1,44 @@
 package datastructures
 
+import "container/heap"
+
 /*
 	Heap with struct implementation
 */
 
-type HeapItem[T any] struct {
-	sort  int
-	value T
+type HeapItem interface {
+	Priority() int
 }
 
-// Min heap; 'sort' (int) field in HeapItem is used for sorting
-type Heap[T any] []HeapItem[T]
+// Min heap; Arbitrary heap item must implement priority() int
+type Heap []HeapItem
 
-func (h Heap[T]) Len() int {
+func NewHeap(vals ...HeapItem) *Heap {
+	h := &Heap{}
+	*h = append(*h, vals...)
+	heap.Init(h)
+	return h
+}
+
+func (h Heap) Len() int {
 	return len(h)
 }
 
-func (h Heap[T]) Less(i, j int) bool {
-	return h[i].sort < h[j].sort
+func (h Heap) Less(i, j int) bool {
+	return h[i].Priority() < h[j].Priority()
 }
 
-func (h Heap[T]) Swap(i, j int) {
+func (h Heap) Swap(i, j int) {
 	h[i], h[j] = h[j], h[i]
 }
 
-func (h *Heap[T]) Push(x any) {
+func (h *Heap) Push(x any) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
-	*h = append(*h, x.(HeapItem[T]))
+	*h = append(*h, x.(HeapItem))
 }
 
-func (h *Heap[T]) Pop() any {
+func (h *Heap) Pop() any {
 	old := *h
 	n := len(old)
 	x := old[n-1]

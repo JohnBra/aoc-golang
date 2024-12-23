@@ -46,3 +46,7 @@ func (d *Deque[T]) PopFront() (T, bool) {
 	d.items = d.items[1:]
 	return result, true
 }
+
+func (d *Deque[T]) Members() []T {
+	return d.items
+}

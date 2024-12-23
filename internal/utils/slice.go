@@ -101,3 +101,14 @@ func IntSliceToString(nums []int, sep string) string {
 	}
 	return strings.Join(str, sep)
 }
+
+func Filter[T any](slice []T, keep func(item T) bool) []T {
+	n := 0
+	for _, x := range slice {
+		if keep(x) {
+			slice[n] = x
+			n++
+		}
+	}
+	return slice[:n]
+}
