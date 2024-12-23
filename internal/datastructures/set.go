@@ -65,3 +65,16 @@ func (s Set[T]) HasIntersection(s2 Set[T]) bool {
 	}
 	return false
 }
+
+func MultiIntersection[T comparable](sets ...Set[T]) Set[T] {
+	if len(sets) < 2 {
+		panic(fmt.Errorf("must provide two or more sets"))
+	}
+
+	result := sets[0].Intersection(sets[1])
+	for i := 2; i < len(sets); i++ {
+		result = result.Intersection(sets[i])
+	}
+
+	return result
+}
