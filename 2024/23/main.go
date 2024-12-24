@@ -17,18 +17,16 @@ func search(graph ds.Graph[string], interconnected ds.Set[[520]string], node str
 	}
 	interconnected.Add(key)
 
+outer:
 	for _, nei := range graph[node].Members() {
 		if req.Contains(nei) {
 			continue
 		}
 
-		fulfills := true
 		for _, q := range req.Members() {
-			fulfills = fulfills && graph[q].Contains(nei)
-		}
-
-		if !fulfills {
-			continue
+			if !graph[q].Contains(nei) {
+				continue outer
+			}
 		}
 
 		nreq := ds.NewSet(req.Members()...)
