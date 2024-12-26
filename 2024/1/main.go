@@ -39,7 +39,7 @@ func main() {
 
 	contents, err := utils.GetFileContentsAsIntMatrix(utils.GetPuzzleInputSrc())
 	utils.Check(err)
-	lists, err := utils.Zip(contents)
+	lists, err := utils.ZipSplit(contents)
 	utils.Check(err)
 
 	if len(lists) != 2 {

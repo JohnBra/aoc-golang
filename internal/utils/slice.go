@@ -72,7 +72,7 @@ func SortListByOrder[T comparable](slice []T, order []T) []T {
 }
 
 // converts a list of tuples into separate lists
-func Zip[T any](tuples [][]T) ([][]T, error) {
+func ZipSplit[T any](tuples [][]T) ([][]T, error) {
 	if len(tuples) == 0 {
 		return nil, fmt.Errorf("can't perform Zip on empty list")
 	}
@@ -92,6 +92,21 @@ func Zip[T any](tuples [][]T) ([][]T, error) {
 	}
 
 	return res, nil
+}
+
+// converts two lists into pairs of tuples
+func ZipMerge[T any](a, b []T) [][2]T {
+	// make sure a is shorter
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+
+	tuples := make([][2]T, len(a))
+	for i := 0; i < len(a); i++ {
+		tuples[i] = [2]T{a[i], b[i]}
+	}
+
+	return tuples
 }
 
 func IntSliceToString(nums []int, sep string) string {

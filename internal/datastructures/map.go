@@ -18,3 +18,23 @@ func (m Map[T, U]) Get(key T, fallback ...U) U {
 	}
 	return val
 }
+
+func (m Map[T, U]) Keys() []T {
+	keys := make([]T, len(m))
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+	return keys
+}
+
+func (m Map[T, U]) Values() []U {
+	values := make([]U, len(m))
+	i := 0
+	for _, v := range m {
+		values[i] = v
+		i++
+	}
+	return values
+}

@@ -103,6 +103,17 @@ func getKeyPadPathMap(keys []rune, pad [][]rune) map[rune]ShortestPathsTo {
 	return keyToKeys
 }
 
+// returns the min len between button a and b
+func getDirLens(dirPaths map[rune]ShortestPathsTo) map[[2]rune]int {
+	res := map[[2]rune]int{}
+	for a, aval := range dirPaths {
+		for b, bval := range aval {
+			res[[2]rune{a, b}] = len(bval[0])
+		}
+	}
+	return res
+}
+
 func sliceProduct(args ...[]string) []string {
 	pools := args
 	npools := len(pools)
@@ -161,15 +172,37 @@ func getPossibleRobotPaths(spaths map[rune]ShortestPathsTo, code string) []strin
 	return sliceProduct(options...)
 }
 
-func filterShortest(paths []string) ([]string, int) {
-	minLen := math.MaxInt
-	for _, p := range paths {
-		minLen = utils.Min(minLen, len(p))
+func shortestPathAtDepth(
+	memo map[[3]int32]int,
+	dirLens map[[2]rune]int,
+	dirPaths map[rune]ShortestPathsTo,
+	a, b rune,
+	depth int32,
+) int {
+	if _, ok := memo[[3]int32{a, b, depth}]; ok {
+		return memo[[3]int32{a, b, depth}]
 	}
 
-	return utils.Filter(paths, func(s string) bool {
-		return len(s) == minLen
-	}), minLen
+	if depth == 1 {
+		fmt.Printf("%d: %c -> %c => %d\n", depth, a, b, dirLens[[2]rune{a, b}])
+		return dirLens[[2]rune{a, b}]
+	}
+
+	optimal := math.MaxInt
+	for _, path := range dirPaths[a][b] {
+		fmt.Printf("%d: %c -> %c path %s\n", depth, a, b, path)
+		length := 0
+
+		for _, tuple := range utils.ZipMerge([]rune("A"+path), []rune(path)) {
+			length += shortestPathAtDepth(memo, dirLens, dirPaths, tuple[0], tuple[1], depth-1)
+			fmt.Printf("%d: %c -> %c => %d\n", depth, tuple[0], tuple[1], length)
+			fmt.Printf("")
+		}
+		optimal = utils.Min(optimal, length)
+	}
+	memo[[3]int32{a, b, depth}] = optimal
+
+	return memo[[3]int32{a, b, depth}]
 }
 
 func solve(codes [][]rune) (int, int) {
@@ -192,22 +225,27 @@ func solve(codes [][]rune) (int, int) {
 	re := regexp.MustCompile(`\d+`)
 	keyPaths := getKeyPadPathMap(keys, keyPad)
 	dirPaths := getKeyPadPathMap(dirKeys, dirKeyPad)
+	dirLens := getDirLens(dirPaths)
+
+	memo := map[[3]int32]int{}
 	minLen := 0
 
 	for _, code := range codes {
 		// keypad bot
 		allPaths := getPossibleRobotPaths(keyPaths, string(code))
-		prevPaths, _ := filterShortest(allPaths)
+		fmt.Printf("%s, %v\n", string(code), allPaths)
 
-		// dir pad bots
-		for range 2 {
-			nextPaths := []string{}
-			for _, p := range prevPaths {
-				nextPaths = append(nextPaths, getPossibleRobotPaths(dirPaths, p)...)
+		optimal := math.MaxInt
+		for _, path := range allPaths {
+			length := 0
+			for _, tuple := range utils.ZipMerge([]rune("A"+path), []rune(path)) {
+				fmt.Printf("path %s tuple: [%c -> %c]\n", path, tuple[0], tuple[1])
+				length += shortestPathAtDepth(memo, dirLens, dirPaths, tuple[0], tuple[1], 2)
 			}
-
-			prevPaths, minLen = filterShortest(nextPaths)
+			fmt.Printf("\t%v: %d\n", path, length)
+			optimal = utils.Min(optimal, length)
 		}
+		fmt.Println(optimal)
 
 		// add to result
 		snum := re.FindAllString(string(code), -1)
