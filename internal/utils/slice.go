@@ -124,3 +124,44 @@ func Filter[T any](slice []T, keep func(item T) bool) []T {
 	}
 	return slice[:n]
 }
+
+func CartesianProduct[T any](args ...[]T) [][]T {
+	pools := args
+	npools := len(pools)
+	indices := make([]int, npools)
+	result := make([]T, npools)
+
+	for i := range result {
+		if len(pools[i]) == 0 {
+			return nil
+		}
+		result[i] = pools[i][0]
+	}
+
+	results := [][]T{result}
+
+	for {
+		i := npools - 1
+		for ; i >= 0; i -= 1 {
+			pool := pools[i]
+			indices[i] += 1
+
+			if indices[i] == len(pool) {
+				indices[i] = 0
+				result[i] = pool[0]
+			} else {
+				result[i] = pool[indices[i]]
+				break
+			}
+
+		}
+
+		if i < 0 {
+			return results
+		}
+
+		newresult := make([]T, npools)
+		copy(newresult, result)
+		results = append(results, newresult)
+	}
+}

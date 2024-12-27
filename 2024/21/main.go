@@ -14,12 +14,13 @@ import (
 )
 
 type QItem struct {
-	r, c int32
+	r, c int
 	seq  string
 }
 
 type Move struct {
-	r, c, k int32 // new r, new c, directional rune
+	r, c int    // new r, new c
+	k    string // directional key
 }
 
 type Mem struct {
@@ -28,12 +29,12 @@ type Mem struct {
 }
 
 func getSequences(keypad [][]rune) map[[2]rune][]string {
-	pos := map[rune][2]int32{}
+	pos := map[rune][2]int{}
 
 	for r, keys := range keypad {
 		for c, key := range keys {
 			if key != '_' {
-				pos[key] = [2]int32{int32(r), int32(c)}
+				pos[key] = [2]int{r, c}
 			}
 		}
 	}
@@ -57,13 +58,13 @@ func getSequences(keypad [][]rune) map[[2]rune][]string {
 			for q.Len() > 0 {
 				cur, _ := q.PopFront()
 				moves := []Move{
-					{cur.r - 1, cur.c, '^'},
-					{cur.r + 1, cur.c, 'v'},
-					{cur.r, cur.c - 1, '<'},
-					{cur.r, cur.c + 1, '>'},
+					{cur.r - 1, cur.c, "^"},
+					{cur.r + 1, cur.c, "v"},
+					{cur.r, cur.c - 1, "<"},
+					{cur.r, cur.c + 1, ">"},
 				}
 				for _, n := range moves {
-					if n.r < 0 || n.c < 0 || n.r == int32(len(keypad)) || n.c == int32(len(keypad[0])) {
+					if n.r < 0 || n.c < 0 || n.r == len(keypad) || n.c == len(keypad[0]) {
 						continue
 					}
 
@@ -77,9 +78,9 @@ func getSequences(keypad [][]rune) map[[2]rune][]string {
 						}
 
 						optimal = len(cur.seq) + 1
-						possibilities = append(possibilities, cur.seq+string(n.k)+"A")
+						possibilities = append(possibilities, cur.seq+n.k+"A")
 					} else {
-						q.PushBack(QItem{n.r, n.c, cur.seq + string(n.k)})
+						q.PushBack(QItem{n.r, n.c, cur.seq + n.k})
 					}
 				}
 			}
@@ -96,7 +97,11 @@ func getPathOptions(seqs map[[2]rune][]string, code string) []string {
 		options = append(options, seqs[[2]rune{t[0], t[1]}])
 	}
 
-	return sliceProduct(options...)
+	res := []string{}
+	for _, s := range utils.CartesianProduct(options...) {
+		res = append(res, strings.Join(s, ""))
+	}
+	return res
 }
 
 func complexity(code string, len int, re *regexp.Regexp) int {
@@ -105,53 +110,6 @@ func complexity(code string, len int, re *regexp.Regexp) int {
 	utils.Check(err)
 
 	return num * len
-}
-
-// creates cartesian product of input and returns
-// joined paths of robot as slice of strings
-func sliceProduct(args ...[]string) []string {
-	pools := args
-	npools := len(pools)
-	indices := make([]int, npools)
-	result := make([]string, npools)
-
-	for i := range result {
-		if len(pools[i]) == 0 {
-			return nil
-		}
-		result[i] = pools[i][0]
-	}
-
-	results := [][]string{result}
-
-	for {
-		i := npools - 1
-		for ; i >= 0; i -= 1 {
-			pool := pools[i]
-			indices[i] += 1
-
-			if indices[i] == len(pool) {
-				indices[i] = 0
-				result[i] = pool[0]
-			} else {
-				result[i] = pool[indices[i]]
-				break
-			}
-
-		}
-
-		if i < 0 {
-			res := []string{}
-			for _, s := range results {
-				res = append(res, strings.Join(s, ""))
-			}
-			return res
-		}
-
-		newresult := make([]string, npools)
-		copy(newresult, result)
-		results = append(results, newresult)
-	}
 }
 
 func pathLenAtDepth(

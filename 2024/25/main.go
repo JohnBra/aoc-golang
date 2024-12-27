@@ -48,6 +48,7 @@ func parseInput(filepath string) ([][5]int, [][5]int, error) {
 		lock := true
 		for i, line := range strings.Split(str, "\n") {
 			if i == 0 && line == "#####" {
+				// do nothing
 			} else if i == 6 && line == "#####" {
 				lock = false
 			} else {
