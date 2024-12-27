@@ -96,13 +96,10 @@ func ZipSplit[T any](tuples [][]T) ([][]T, error) {
 
 // converts two lists into pairs of tuples
 func ZipMerge[T any](a, b []T) [][2]T {
-	// make sure a is shorter
-	if len(a) > len(b) {
-		a, b = b, a
-	}
+	shortest := Min(len(a), len(b))
+	tuples := make([][2]T, shortest)
 
-	tuples := make([][2]T, len(a))
-	for i := 0; i < len(a); i++ {
+	for i := 0; i < shortest; i++ {
 		tuples[i] = [2]T{a[i], b[i]}
 	}
 
@@ -126,49 +123,4 @@ func Filter[T any](slice []T, keep func(item T) bool) []T {
 		}
 	}
 	return slice[:n]
-}
-
-func sliceProduct(args ...[]string) []string {
-	pools := args
-	npools := len(pools)
-	indices := make([]int, npools)
-	result := make([]string, npools)
-
-	for i := range result {
-		if len(pools[i]) == 0 {
-			return nil
-		}
-		result[i] = pools[i][0]
-	}
-
-	results := [][]string{result}
-
-	for {
-		i := npools - 1
-		for ; i >= 0; i -= 1 {
-			pool := pools[i]
-			indices[i] += 1
-
-			if indices[i] == len(pool) {
-				indices[i] = 0
-				result[i] = pool[0]
-			} else {
-				result[i] = pool[indices[i]]
-				break
-			}
-
-		}
-
-		if i < 0 {
-			res := []string{}
-			for _, s := range results {
-				res = append(res, strings.Join(s, ""))
-			}
-			return res
-		}
-
-		newresult := make([]string, npools)
-		copy(newresult, result)
-		results = append(results, newresult)
-	}
 }

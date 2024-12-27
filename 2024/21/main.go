@@ -1,9 +1,10 @@
 package main
 
 import (
-	"container/heap"
 	"fmt"
+	"io"
 	"math"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,108 +13,102 @@ import (
 	"github.com/JohnBra/aoc-2024/internal/utils"
 )
 
-type Coord struct {
-	r, c int
+type QItem struct {
+	r, c int32
+	seq  string
 }
 
-type HItem struct {
-	cost  int
-	coord Coord
-	path  string
-	dir   int
+type Move struct {
+	r, c, k int32 // new r, new c, directional rune
 }
 
-func (h HItem) Priority() int {
-	return h.cost
+type Mem struct {
+	path string
+	len  int
 }
 
-// key -> shortest paths to key
-type ShortestPathsTo map[rune][]string
+func getSequences(keypad [][]rune) map[[2]rune][]string {
+	pos := map[rune][2]int32{}
 
-func findShortestPaths(matrix [][]rune, from, to rune) []string {
-	// r, c
-	visit := ds.NewSet[[3]int]()
-	h := ds.NewHeap()
-	curCost := math.MaxInt
-	paths := []string{}
-	path := ""
-
-out:
-	for r := range len(matrix) {
-		for c := range len(matrix[0]) {
-			if matrix[r][c] == from {
-				heap.Push(h, HItem{0, Coord{r, c}, "", -1})
-				break out
+	for r, keys := range keypad {
+		for c, key := range keys {
+			if key != '_' {
+				pos[key] = [2]int32{int32(r), int32(c)}
 			}
 		}
 	}
 
-	for h.Len() > 0 {
-		item, _ := heap.Pop(h).(HItem)
-		visit.Add([3]int{item.dir, item.coord.r, item.coord.c})
+	seqs := map[[2]rune][]string{}
 
-		if matrix[item.coord.r][item.coord.c] == to {
-			if item.Priority() <= curCost {
-				curCost = item.Priority()
-				path = item.path + string('A')
-				paths = append(paths, path)
-			}
-		}
-
-		for o, dir := range utils.Axes {
-			nr, nc := item.coord.r+dir[0], item.coord.c+dir[1]
-			ncoord := Coord{nr, nc}
-
-			if !utils.IsOutOfBounds(matrix, nr, nc) && !visit.Contains([3]int{o, nr, nc}) && matrix[nr][nc] != ' ' {
-				heap.Push(h, HItem{
-					item.cost + 1,
-					ncoord,
-					item.path + string(utils.AxesArrows[o]),
-					o,
-				})
-			}
-		}
-	}
-
-	//fmt.Printf("Shortest paths from %c to %c: %v\n", from, to, paths)
-	return paths
-}
-
-func getKeyPadPathMap(keys []rune, pad [][]rune) map[rune]ShortestPathsTo {
-	keyToKeys := map[rune]ShortestPathsTo{}
-
-	for r := range len(pad) {
-		for c := range len(pad[0]) {
-			if pad[r][c] == ' ' {
+	for a := range pos {
+		for b := range pos {
+			sKey := [2]rune{a, b}
+			if a == b {
+				seqs[sKey] = []string{"A"}
 				continue
 			}
 
-			m, ok := keyToKeys[pad[r][c]]
-			if !ok {
-				m = map[rune][]string{}
-			}
+			possibilities := []string{}
+			p := pos[a]
+			q := ds.NewDeque([]QItem{{p[0], p[1], ""}})
+			optimal := math.MaxInt
 
-			for _, k := range keys {
-				m[k] = append(m[k], findShortestPaths(pad, pad[r][c], k)...)
+		outer:
+			for q.Len() > 0 {
+				cur, _ := q.PopFront()
+				moves := []Move{
+					{cur.r - 1, cur.c, '^'},
+					{cur.r + 1, cur.c, 'v'},
+					{cur.r, cur.c - 1, '<'},
+					{cur.r, cur.c + 1, '>'},
+				}
+				for _, n := range moves {
+					if n.r < 0 || n.c < 0 || n.r == int32(len(keypad)) || n.c == int32(len(keypad[0])) {
+						continue
+					}
+
+					if keypad[n.r][n.c] == '_' {
+						continue
+					}
+
+					if keypad[n.r][n.c] == b {
+						if optimal < len(cur.seq)+1 {
+							break outer
+						}
+
+						optimal = len(cur.seq) + 1
+						possibilities = append(possibilities, cur.seq+string(n.k)+"A")
+					} else {
+						q.PushBack(QItem{n.r, n.c, cur.seq + string(n.k)})
+					}
+				}
 			}
-			keyToKeys[pad[r][c]] = m
+			seqs[sKey] = possibilities
 		}
 	}
 
-	return keyToKeys
+	return seqs
 }
 
-// returns the min len between button a and b
-func getDirLens(dirPaths map[rune]ShortestPathsTo) map[[2]rune]int {
-	res := map[[2]rune]int{}
-	for a, aval := range dirPaths {
-		for b, bval := range aval {
-			res[[2]rune{a, b}] = len(bval[0])
-		}
+func getPathOptions(seqs map[[2]rune][]string, code string) []string {
+	options := [][]string{}
+	for _, t := range utils.ZipMerge([]rune("A"+code), []rune(code)) {
+		options = append(options, seqs[[2]rune{t[0], t[1]}])
 	}
-	return res
+
+	return sliceProduct(options...)
 }
 
+func complexity(code string, len int, re *regexp.Regexp) int {
+	snum := re.FindAllString(string(code), -1)
+	num, err := strconv.Atoi(snum[0])
+	utils.Check(err)
+
+	return num * len
+}
+
+// creates cartesian product of input and returns
+// joined paths of robot as slice of strings
 func sliceProduct(args ...[]string) []string {
 	pools := args
 	npools := len(pools)
@@ -159,110 +154,103 @@ func sliceProduct(args ...[]string) []string {
 	}
 }
 
-func getPossibleRobotPaths(spaths map[rune]ShortestPathsTo, code string) []string {
-	pos := 'A'
-	options := [][]string{}
-
-	for _, digit := range code {
-		options = append(options, spaths[pos][digit])
-		pos = digit
-	}
-
-	// cartesian product of all (minimal) robot 1 options
-	return sliceProduct(options...)
-}
-
-func shortestPathAtDepth(
-	memo map[[3]int32]int,
-	dirLens map[[2]rune]int,
-	dirPaths map[rune]ShortestPathsTo,
-	a, b rune,
-	depth int32,
+func pathLenAtDepth(
+	memo map[Mem]int,
+	dlens map[[2]rune]int,
+	dseqs map[[2]rune][]string,
+	path string,
+	depth int,
 ) int {
-	if _, ok := memo[[3]int32{a, b, depth}]; ok {
-		return memo[[3]int32{a, b, depth}]
+	if _, ok := memo[Mem{path, depth}]; ok {
+		return memo[Mem{path, depth}]
 	}
+
+	subpaths := utils.ZipMerge([]rune("A"+path), []rune(path))
 
 	if depth == 1 {
-		fmt.Printf("%d: %c -> %c => %d\n", depth, a, b, dirLens[[2]rune{a, b}])
-		return dirLens[[2]rune{a, b}]
-	}
-
-	optimal := math.MaxInt
-	for _, path := range dirPaths[a][b] {
-		fmt.Printf("%d: %c -> %c path %s\n", depth, a, b, path)
-		length := 0
-
-		for _, tuple := range utils.ZipMerge([]rune("A"+path), []rune(path)) {
-			length += shortestPathAtDepth(memo, dirLens, dirPaths, tuple[0], tuple[1], depth-1)
-			fmt.Printf("%d: %c -> %c => %d\n", depth, tuple[0], tuple[1], length)
-			fmt.Printf("")
+		len := 0
+		for _, subpath := range subpaths {
+			len += dlens[[2]rune{subpath[0], subpath[1]}]
 		}
-		optimal = utils.Min(optimal, length)
+		return len
 	}
-	memo[[3]int32{a, b, depth}] = optimal
 
-	return memo[[3]int32{a, b, depth}]
+	minLen := 0
+	for _, subpath := range subpaths {
+		seqMinLen := math.MaxInt
+		for _, seq := range dseqs[[2]rune{subpath[0], subpath[1]}] {
+			seqMinLen = utils.Min(seqMinLen, pathLenAtDepth(memo, dlens, dseqs, seq, depth-1))
+		}
+		minLen += seqMinLen
+	}
+	memo[Mem{path, depth}] = minLen
+
+	return minLen
 }
 
-func solve(codes [][]rune) (int, int) {
+func solve(input []string, nseqs, dseqs map[[2]rune][]string) (int, int) {
 	p1, p2 := 0, 0
-
-	keys := []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A'}
-	dirKeys := []rune{'^', '>', 'v', '<', 'A'}
-	keyPad := [][]rune{
-		{'7', '8', '9'},
-		{'4', '5', '6'},
-		{'1', '2', '3'},
-		{' ', '0', 'A'},
-	}
-
-	dirKeyPad := [][]rune{
-		{' ', '^', 'A'},
-		{'<', 'v', '>'},
-	}
-
 	re := regexp.MustCompile(`\d+`)
-	keyPaths := getKeyPadPathMap(keys, keyPad)
-	dirPaths := getKeyPadPathMap(dirKeys, dirKeyPad)
-	dirLens := getDirLens(dirPaths)
 
-	memo := map[[3]int32]int{}
-	minLen := 0
+	dlens := map[[2]rune]int{}
+	for rtuple, seqs := range dseqs {
+		dlens[rtuple] = len(seqs[0])
+	}
 
-	for _, code := range codes {
-		// keypad bot
-		allPaths := getPossibleRobotPaths(keyPaths, string(code))
-		fmt.Printf("%s, %v\n", string(code), allPaths)
+	memo := map[Mem]int{}
 
-		optimal := math.MaxInt
-		for _, path := range allPaths {
-			length := 0
-			for _, tuple := range utils.ZipMerge([]rune("A"+path), []rune(path)) {
-				fmt.Printf("path %s tuple: [%c -> %c]\n", path, tuple[0], tuple[1])
-				length += shortestPathAtDepth(memo, dirLens, dirPaths, tuple[0], tuple[1], 2)
-			}
-			fmt.Printf("\t%v: %d\n", path, length)
-			optimal = utils.Min(optimal, length)
+	for _, code := range input {
+		paths := getPathOptions(nseqs, code)
+		optimalP1, optimalP2 := math.MaxInt, math.MaxInt
+
+		for _, path := range paths {
+			optimalP1 = utils.Min(optimalP1, pathLenAtDepth(memo, dlens, dseqs, path, 2))
+			optimalP2 = utils.Min(optimalP2, pathLenAtDepth(memo, dlens, dseqs, path, 25))
 		}
-		fmt.Println(optimal)
 
-		// add to result
-		snum := re.FindAllString(string(code), -1)
-		num, err := strconv.Atoi(snum[0])
-		utils.Check(err)
-
-		p1 += num * minLen
+		p1 += complexity(code, optimalP1, re)
+		p2 += complexity(code, optimalP2, re)
 	}
 
 	return p1, p2
 }
 
+func parseInput(filepath string) ([]string, error) {
+	codes := []string{}
+
+	f, err := os.Open(filepath)
+	if err != nil {
+		return codes, err
+	}
+	defer f.Close()
+
+	b := new(strings.Builder)
+	io.Copy(b, f)
+
+	codes = strings.Split(strings.TrimSuffix(b.String(), "\n"), "\n")
+	return codes, nil
+}
+
 func main() {
-	input, err := utils.GetFileContentsAsRuneMatrix(utils.GetPuzzleInputSrc())
+	input, err := parseInput(utils.GetPuzzleInputSrc())
 	utils.Check(err)
 
-	partOneRes, partTwoRes := solve(input)
+	npad := [][]rune{
+		{'7', '8', '9'},
+		{'4', '5', '6'},
+		{'1', '2', '3'},
+		{'_', '0', 'A'},
+	}
+
+	dpad := [][]rune{
+		{'_', '^', 'A'},
+		{'<', 'v', '>'},
+	}
+
+	nseqs := getSequences(npad)
+	dseqs := getSequences(dpad)
+
+	partOneRes, partTwoRes := solve(input, nseqs, dseqs)
 	fmt.Println("Part one res", partOneRes)
 	fmt.Println("Part two res", partTwoRes)
 }
